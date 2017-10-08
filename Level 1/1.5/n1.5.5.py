@@ -27,14 +27,15 @@ def main():
     # 1.5.5 c1
     print "\n\n********** 1.5.5 c1 **********"
     print "The final population list sorted by country name is:"
-    for country, population in sorted(dct.items(), key=lambda (name, num): name):
+    for country, population in sorted(dct.items()):
         print country, "has population", population
 
     # 1.5.5 c2
     print "\n\n********** 1.5.5 c2 **********"
     print "The final population list sorted by country population is:"
-    for country, population in sorted(dct.items(), key=lambda (name, num): num, reverse=True):
-        print country, "has population", population
+    temp_lst = sorted([(-v, k) for k, v in dct.items()])
+    for population, country in temp_lst:
+        print country, "has population", -population
 
 
 if __name__ == '__main__':
