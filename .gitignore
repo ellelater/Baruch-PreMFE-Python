@@ -3,3 +3,6 @@
 
 # pycharm
 .idea
+
+# binaries
+*.pyc
