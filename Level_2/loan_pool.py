@@ -23,7 +23,7 @@ class LoanPool(object):
     def WAM(self):
         nominator = sum(l._face * l._rate for l in self._l_list)
         denominator = sum(l._rate for l in self._l_list)
-        return nominator / denominator
+        return nominator * 1.0 / denominator
 
 
 if __name__ == "__main__":
