@@ -6,3 +6,7 @@
 
 # binaries
 *.pyc
+
+# data
+*.csv
+*.txt
