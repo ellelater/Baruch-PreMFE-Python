@@ -20,6 +20,7 @@ class Timer(object):
     def __call__(self, *args, **kwargs):
         self.start()
         self.func(*args, **kwargs)
+        print self.func
         self.end()
 
     def config_format(self, format):
