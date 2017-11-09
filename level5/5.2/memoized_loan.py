@@ -4,9 +4,10 @@ This program modifies the loan Class in Level 2 using exception handling.
 from asset import Asset
 import logging
 from memoized import Memoized
+from timer import Timer
 
 
-class MemoizableLoan(object):
+class MemoizedLoan(object):
     def __init__(self, term, rate, face, asset):
         if not isinstance(asset, Asset):
             logging.error("Input must be of asset class")
@@ -26,15 +27,16 @@ class MemoizableLoan(object):
     def totalInterest(self):
         return self.totalPayments() - self._face
 
+    @Timer
     @Memoized
     def interestDue(self, period):
         logging.warn("Using recursive version of waterfall algorithm.")
         if period <= 0 or period > self._term:
             logging.info("Period is negative or larger than term.")
             return 0
-        return self.balance(period - 1) * self._rate
+        last_balance = self.balance(period - 1)
+        return last_balance * self._rate
 
-    @Memoized
     def principalDue(self, period):
         logging.warn("Using recursive version of waterfall algorithm.")
         if period <= 0 or period > self._term:
@@ -42,7 +44,6 @@ class MemoizableLoan(object):
             return 0
         return self.monthlyPayment(period) - self.interestDue(period)
 
-    @Memoized
     def balance(self, period):
         logging.warn("Using recursive version of waterfall algorithm.")
         if period <= 0 or period > self._term:

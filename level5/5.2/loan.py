@@ -3,6 +3,7 @@ This program modifies the loan Class in Level 2 using exception handling.
 '''
 from asset import Asset
 import logging
+from timer import Timer
 
 
 class Loan(object):
@@ -25,6 +26,7 @@ class Loan(object):
     def totalInterest(self):
         return self.totalPayments() - self._face
 
+    @Timer
     def interestDue(self, period):
         logging.warn("Using recursive version of waterfall algorithm.")
         if period <= 0 or period > self._term:

@@ -1,7 +1,7 @@
 from timer import Timer
 from asset import Asset
 from loan import Loan
-from memoizable_loan import MemoizableLoan
+from memoized_loan import MemoizedLoan
 import logging
 
 logging.basicConfig(level=logging.ERROR)
@@ -10,21 +10,17 @@ logging.basicConfig(level=logging.ERROR)
 def main():
     a = Asset(1000)
     normal_loan = Loan(12, 0.3, 1000, a)
-    memoizable_loan = MemoizableLoan(12, 0.3, 1000, a)
+    memoizable_loan = MemoizedLoan(12, 0.3, 1000, a)
 
     print "First normal loan time cost:"
-    with Timer():
-        normal_loan.interestDue(10)
+    normal_loan.interestDue(10)
     print "Second normal loan time cost:"
-    with Timer():
-        normal_loan.interestDue(10)
+    normal_loan.interestDue(10)
 
     print "First memoizable loan time cost:"
-    with Timer():
-        memoizable_loan.interestDue(10)
+    memoizable_loan.interestDue(10)
     print "Second memoizable loan time cost:"
-    with Timer():
-        memoizable_loan.interestDue(10)
+    memoizable_loan.interestDue(10)
 
 
 if __name__ == '__main__':

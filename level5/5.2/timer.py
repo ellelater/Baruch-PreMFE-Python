@@ -3,25 +3,31 @@ Modify Timer class to log errors instead of a print statement.
 '''
 import time
 import logging
+from functools import partial, update_wrapper
 
 
 class Timer(object):
     warnThreshold = 60
 
-    def __init__(self, func=None, warnThreshold=60):
+    def __init__(self, func, warnThreshold=60):
         self._start = 0
         self._isrunning = False
         self._format = 'seconds'
         self._last_time_taken = -1
         self.warnThreshold = warnThreshold
+        # decoration
         self.func = func
+        update_wrapper(self, func)
 
-    # Used fo decorator
-    def __call__(self, *args, **kwargs):
+    # Used for decorator
+    def __call__(self, *args):
         self.start()
-        self.func(*args, **kwargs)
-        print self.func
+        ret = self.func(*args)
         self.end()
+        return ret
+
+    def __get__(self, obj, objtype):
+        return partial(self.__call__, obj)
 
     def config_format(self, format):
         self._format = format
