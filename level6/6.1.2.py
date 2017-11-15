@@ -18,7 +18,7 @@ def frequency(samples, lower_bound, upper_bound, num_bins):
         elif x >= upper_bound:
             count[-1] += 1
         else:
-            bin = int(math.ceil((x - lower_bound) / bin_width)) + 1
+            bin = int(math.floor((x - lower_bound) / bin_width)) + 1
             count[bin] += 1
     return bins, count
 
