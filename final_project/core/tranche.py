@@ -38,7 +38,7 @@ class StandardTranche(Tranche):
         else:
             # make payment
             self._already_paid_int = True
-        
+
     def notionalBalance(self):
         pass
 

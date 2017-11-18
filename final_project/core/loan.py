@@ -1,5 +1,6 @@
-from asset import Asset, Car
+from asset import Asset
 import logging
+from final_project.utils import Memoized
 
 
 class Loan(object):
@@ -13,6 +14,18 @@ class Loan(object):
         self.asset = asset
         self._pmt_per_month = self._rate * self._face / (1 - (1 + self._rate)**(-self._term))
 
+    @property
+    def term(self):
+        return self._term
+
+    @property
+    def face(self):
+        return self._face
+
+    @property
+    def rate(self, period=0):
+        return self._rate
+
     def monthlyPayment(self, period):  # period is a dummy parameter
         return self._pmt_per_month
 
@@ -22,24 +35,26 @@ class Loan(object):
     def totalInterest(self):
         return self.totalPayments() - self._face
 
+    @Memoized
     def interestDue(self, period):
-        logging.warn("Using recursive version of waterfall algorithm.")
         if period <= 0 or period > self._term:
-            logging.info("Period is negative or larger than term.")
+            logging.warn("Invalid period")
             return 0
         return self.balance(period - 1) * self._rate
 
+    @Memoized
     def principalDue(self, period):
-        logging.warn("Using recursive version of waterfall algorithm.")
         if period <= 0 or period > self._term:
-            logging.info("Period is negative or larger than term.")
+            logging.warn("Invalid period")
             return 0
         return self.monthlyPayment(period) - self.interestDue(period)
 
+    @Memoized
     def balance(self, period):
-        logging.warn("Using recursive version of waterfall algorithm.")
-        if period <= 0 or period > self._term:
-            logging.info("Period is negative or larger than term.")
+        if period == 0:
+            return self.face
+        if period < 0 or period > self._term:
+            logging.warn("Invalid period")
             return 0
         return self._face * (1 + self._rate) ** period - self.monthlyPayment(period) * \
                                                          ((1 + self._rate) ** period - 1) / self._rate
@@ -61,7 +76,7 @@ class VariableRateLoan(Loan):
         super(VariableRateLoan, self).__init__(term, rate, face, asset)
         self._rateDict = rateDict
 
-    def rate(self, period):
+    def rate(self, period=0):
         # This shows how to find the rate for certain period in a rateDict
         rate = self._rateDict[min(self._rateDict.keys())]
         rate_change_timestamps = sorted(self._rateDict.keys())
@@ -72,10 +87,33 @@ class VariableRateLoan(Loan):
         return rate
 
 
-class AutoLoan(Loan):
-    def __init__(self, term, rate, face, rateDict, car):
-        super(AutoLoan, self).__init__(term, rate, face, car)
-        if not isinstance(car, Car):
-            logging.error("Input must be a Car type.")
-            return
-        self.car = car
+class LoanPool(object):
+    def __init__(self, loan_list):
+        self._l_list = loan_list
+
+    def totalPrincipal(self):
+        return sum(l.face for l in self._l_list)
+
+    def totalBalance(self, period):
+        return sum(l.balance(period) for l in self._l_list)
+
+    def totalDues(self, period):
+        principal_due = sum(l.principalDue(period) for l in self._l_list)
+        interest_due = sum(l.interestDue(period) for l in self._l_list)
+        payment_due = sum(l.monthlyPayment(period) for l in self._l_list)
+        return principal_due, interest_due, payment_due
+
+    def numOfActive(self, period):
+        return len([l for l in self._l_list if l.balance(period) > 0])
+
+    def getWaterfall(self, period):
+        ret = []
+        for l in self._l_list:
+            ret.append([l.monthlyPayment(period), l.principalDue(period),
+                        l.interestDue(period), l.balance(period)])
+        return ret
+
+    def WAM(self):
+        nominator = sum(l.face * l.rate for l in self._l_list)
+        denominator = sum(l.rate for l in self._l_list)
+        return nominator * 1.0 / denominator
