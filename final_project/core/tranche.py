@@ -1,3 +1,6 @@
+import logging
+
+
 class Tranche(object):
     def __init__(self, notional, rate, sub_level):
         self.notional = notional
@@ -14,15 +17,28 @@ class StandardTranche(Tranche):
         self._cur_int_due = 0
         self._int_shortfall = 0
 
+        self._already_paid_int = False
+        self._already_paid_prp = False
+
     def increaseTimePeriod(self):
         self._cur_time += 1
+        self._already_paid_int = False
+        self._already_paid_prp = False
 
     def makePrincipalPayment(self, amount):
-        pass
+        if self._already_paid_prp:
+            logging.warn("Principal already paid at this time period!")
+        else:
+            # make payment
+            self._already_paid_prp = True
 
     def makeInteresetPayment(self, amount):
-        pass
-
+        if self._already_paid_int:
+            logging.warn("Interest already paid at this time period!")
+        else:
+            # make payment
+            self._already_paid_int = True
+        
     def notionalBalance(self):
         pass
 
