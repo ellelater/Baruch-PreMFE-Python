@@ -13,8 +13,8 @@ class Tranche(object):
 
 
 class StandardTranche(Tranche):
-    def __init__(self, notional, rate, sub_level):
-        super(StandardTranche, self).__init__(notional, rate, sub_level)
+    def __init__(self, notional, notional_percent, rate, sub_level):
+        super(StandardTranche, self).__init__(notional, notional_percent, rate, sub_level)
         self._cur_time = 0
         self._cur_ntl_balance = self.notional
         self._cur_int_due = 0

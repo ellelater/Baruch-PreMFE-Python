@@ -65,7 +65,3 @@ class Memoized(object):
 
     def __get__(self, obj, objtype):
         return partial(self.__call__, obj)
-
-
-def doWaterfall(loan_pool, securities):
-    pass
