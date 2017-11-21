@@ -37,15 +37,21 @@ class Loan(object):
 
     @Memoized
     def interestDue(self, period):
-        if period <= 0 or period > self._term:
+        if period <= 0:
             logging.warn("Invalid period")
+            return 0
+        elif period > self._term:
+            logging.info("Loan expired")
             return 0
         return self.balance(period - 1) * self._rate
 
     @Memoized
     def principalDue(self, period):
-        if period <= 0 or period > self._term:
+        if period <= 0:
             logging.warn("Invalid period")
+            return 0
+        elif period > self._term:
+            logging.info("Loan expired")
             return 0
         return self.monthlyPayment(period) - self.interestDue(period)
 
@@ -53,8 +59,11 @@ class Loan(object):
     def balance(self, period):
         if period == 0:
             return self.face
-        if period < 0 or period > self._term:
+        if period < 0:
             logging.warn("Invalid period")
+            return 0
+        elif period > self._term:
+            logging.info("Loan expired")
             return 0
         return self._face * (1 + self._rate) ** period - self.monthlyPayment(period) * \
                                                          ((1 + self._rate) ** period - 1) / self._rate

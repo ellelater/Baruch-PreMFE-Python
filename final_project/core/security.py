@@ -44,10 +44,10 @@ class StructuredSecurities(object):
         ret = [[] for tr in self.tr_lst]
         for i, tr in enumerate(self.tr_lst):
             # Calculate these quantities for each tranche
-            int_due = 0
-            int_paid = 0
-            int_shortfall = 0
-            prp_paid = 0
-            balance = 0
+            int_due = tr.interestDue
+            int_paid = tr.interestPaid
+            int_shortfall = tr.interestShortfall
+            prp_paid = tr.principalPaid
+            balance = tr.notionalBalance
             ret[i] = [int_due, int_paid, int_shortfall, prp_paid, balance]
         return ret

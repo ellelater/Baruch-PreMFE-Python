@@ -1,5 +1,6 @@
 from core.loan_pool import LoanPool
 from core.security import StructuredSecurities
+import logging
 
 
 def doWaterfall(loan_pool, securities):
@@ -10,11 +11,12 @@ def doWaterfall(loan_pool, securities):
     sc_waterfalls = []
     reserve_cash = []
     while loan_pool.numOfActive(period) > 0:
-        securities.increaseTimePeriod()
+        logging.info("Period {}, # of Loan left: {}".format(period, loan_pool.numOfActive(period)))
+        cash = loan_pool.totalDues(period)[-1]
+        securities.makePayments(cash)
         sc_waterfalls.append(securities.getWaterfall())
         lp_waterfalls.append(loan_pool.getWaterfall(period))
-        reserve_cash.append(securities.reserve_account)
-        cash = loan_pool.totalDues(period)
-        securities.makePayments(cash)
+        reserve_cash.append(securities.reserved_account)
+        securities.increaseTimePeriod()
+        period += 1
     return lp_waterfalls, sc_waterfalls, reserve_cash
-
