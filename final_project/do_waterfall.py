@@ -1,6 +1,7 @@
 from core.loan_pool import LoanPool
 from core.security import StructuredSecurities
 import logging
+from utils import ABSRating
 
 
 def doWaterfall(loan_pool, securities):
@@ -19,4 +20,11 @@ def doWaterfall(loan_pool, securities):
         reserve_cash.append(securities.reserved_account)
         securities.increaseTimePeriod()
         period += 1
-    return lp_waterfalls, sc_waterfalls, reserve_cash
+
+    tr_payments = [[] for i in xrange(len(securities.tr_lst))]
+    for period_wfs in sc_waterfalls:
+        for tr_idx, tr_wf in enumerate(period_wfs):
+            tr_payments[tr_idx].append(tr_wf[1] + tr_wf[3])
+    tr_metrics = [(tr.IRR(payments), tr.DIRR(payments), tr.AL(payments), ABSRating(tr.DIRR(payments)))
+                  for tr, payments in zip(securities.tr_lst, tr_payments)]
+    return tr_metrics, lp_waterfalls, sc_waterfalls, reserve_cash

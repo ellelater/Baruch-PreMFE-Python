@@ -2,6 +2,7 @@
 This program is for 7.1.1 and 7.1.2, creating a Tranche class and a StandardTranche class derived from it.
 '''
 import logging
+import numpy as np
 
 
 class Tranche(object):
@@ -10,6 +11,15 @@ class Tranche(object):
         self.ntl_per = notional_percent
         self.rate = rate
         self.sub_level = sub_level
+
+    def IRR(self, payments):
+        return np.irr([-self.notional] + payments)
+
+    def DIRR(self, payments):
+        return self.IRR(payments) - self.rate
+
+    def AL(self, payments):
+        return sum((i+1)*payments[i] for i in xrange(len(payments))) / self.notional
 
 
 # TODO: Pay 0 equals to hasnt paid?

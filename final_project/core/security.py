@@ -28,7 +28,8 @@ class StructuredSecurities(object):
     def makePayments(self, cash_amount):
         cash_left = cash_amount + self.reserved_account
         for tr in self.tr_lst:
-            cash_left = tr.makeInterestPayment(cash_left)
+            if tr.notionalBalance > 0:
+                cash_left = tr.makeInterestPayment(cash_left)
         if cash_left > 0:  # deal with cash left over here
             if self.mode == "Sequential":
                 for tr in self.tr_lst:
