@@ -1,9 +1,13 @@
 import loan
 import asset
 import csv
+import numpy as np
 
 
 class LoanPool(object):
+    default_periods = np.array([1, 10, 60, 120, 180, 210, 360])
+    default_rates = [0.0005, 0.001, 0.002, 0.004, 0.002, 0.001]
+
     def __init__(self, loan_list):
         self._l_list = loan_list
 
@@ -48,3 +52,19 @@ class LoanPool(object):
         nominator = sum(l.face * l.rate for l in self._l_list)
         denominator = sum(l.rate for l in self._l_list)
         return nominator * 1.0 / denominator
+
+    def checkDefaults(self, period):
+        rate_idx = np.where(period <= LoanPool.default_periods)[0][0]
+        default_prob = LoanPool.default_rates[rate_idx]
+        defaults = np.asarray(np.random.uniform(size=len(self._l_list)) > default_prob, dtype=int)
+        recover_amount = 0
+        for l, default in zip(self._l_list, defaults):
+            if l.defaulted:
+                continue
+            l.checkDefault(default)
+            if l.defaulted:
+                recover_amount += l.recoveryValue(period)
+        return recover_amount
+
+
+

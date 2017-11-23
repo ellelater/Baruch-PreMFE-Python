@@ -13,8 +13,9 @@ def doWaterfall(loan_pool, securities):
     reserve_cash = []
     while loan_pool.numOfActive(period) > 0:
         logging.info("Period {}, # of Loan left: {}".format(period, loan_pool.numOfActive(period)))
+        recovery = loan_pool.checkDefaults(period)
         cash = loan_pool.totalDues(period)[-1]
-        securities.makePayments(cash)
+        securities.makePayments(cash + recovery)
         sc_waterfalls.append(securities.getWaterfall())
         lp_waterfalls.append(loan_pool.getWaterfall(period))
         reserve_cash.append(securities.reserved_account)

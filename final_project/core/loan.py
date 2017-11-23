@@ -13,6 +13,7 @@ class Loan(object):
         self._face = face
         self.asset = asset
         self._pmt_per_month = self._rate * self._face / (1 - (1 + self._rate)**(-self._term))
+        self.defaulted = False
 
     @property
     def term(self):
@@ -67,6 +68,12 @@ class Loan(object):
             return 0
         return self._face * (1 + self._rate) ** period - self.monthlyPayment(period) * \
                                                          ((1 + self._rate) ** period - 1) / self._rate
+
+    def checkDefault(self, flag):
+        self.defaulted = True if flag == 0 else False
+        if self.defaulted:
+            self._face = 0
+            self._pmt_per_month = 0
 
     def recoveryValue(self, period):
         return self.asset.current_val(period) * 0.6  # recovery multiplier
