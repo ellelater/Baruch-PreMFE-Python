@@ -13,7 +13,7 @@ class Tranche(object):
         self.sub_level = sub_level
 
     def IRR(self, payments):
-        return np.irr([-self.notional] + payments)
+        return np.irr([-self.notional] + payments) * 12
 
     def DIRR(self, payments):
         return self.IRR(payments) - self.rate

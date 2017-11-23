@@ -11,10 +11,10 @@ def main():
     lp.loadCSV('../../Loans.csv')
 
     sc = StructuredSecurities(lp.totalPrincipal())
-    # first tranche: 0.8 ntl per, 0.01 rate, sub_level 0
-    sc.addTranche(StandardTranche, 0.8, 0.01, 0)
-    # second tranche: 0.2 ntl per, 0.02 rate, sub_level 1
-    sc.addTranche(StandardTranche, 0.2, 0.02, 0)
+    # first tranche: 0.8 ntl per, 0.1 rate, sub_level 0
+    sc.addTranche(StandardTranche, 0.8, 0.1, 0)
+    # second tranche: 0.2 ntl per, 0.3 rate, sub_level 1
+    sc.addTranche(StandardTranche, 0.2, 0.3, 1)
 
     # What is "some clever list comprehension"?
     tr_metrics, lp_wf, sc_wf, res_amounts = doWaterfall(lp, sc)

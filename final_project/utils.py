@@ -10,6 +10,7 @@ ABSRatingLetters = ["Aaa", "Aa1", "Aa2", "Aa3", "A1", "A2", "A3",
 
 
 def ABSRating(dirr):
+    assert dirr > 0, "Wrong input"
     idx = np.where(ABSRatingRates >= dirr/100.)[0][0] - 1
     return ABSRatingLetters[idx]
 
