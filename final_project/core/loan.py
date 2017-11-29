@@ -21,14 +21,14 @@ class Loan(object):
 
     @property
     def face(self):
-        return self._face
+        return 0 if self.defaulted else self._face
 
     @property
     def rate(self, period=0):
         return self._rate
 
     def monthlyPayment(self, period):  # period is a dummy parameter
-        return self._pmt_per_month
+        return 0 if self.defaulted else self._pmt_per_month
 
     def totalPayments(self):
         return sum([self.monthlyPayment(period) for period in range(self._term)])
@@ -66,14 +66,23 @@ class Loan(object):
         elif period > self._term:
             logging.info("Loan expired")
             return 0
+        elif self.defaulted:
+            logging.info("Loan defaulted")
+            return 0
         return self._face * (1 + self._rate) ** period - self.monthlyPayment(period) * \
                                                          ((1 + self._rate) ** period - 1) / self._rate
 
     def checkDefault(self, flag):
-        self.defaulted = True if flag == 0 else False
-        if self.defaulted:
-            self._face = 0
-            self._pmt_per_month = 0
+        if flag == 0:
+            self.defaulted = True
+        """ I chose to not set the face and balance value to 0, but instead return 0 when they are called,
+            which appears the same from outside of the Loan class. (See self.face and self.balance)
+            This is for the sake of reset function. If they are directly set to 0 after being defaulted, they
+            cannot be recovered for the next simulation and the object needs to be reconstructed from csv. 
+        """
+
+    def reset(self):
+        self.defaulted = False
 
     def recoveryValue(self, period):
         return self.asset.current_val(period) * 0.6  # recovery multiplier

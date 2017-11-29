@@ -2,6 +2,7 @@ from core.loan_pool import LoanPool
 from core.security import StructuredSecurities
 from core.tranche import StandardTranche
 from waterfall import doWaterfall
+import utils
 import itertools
 import logging
 
@@ -10,11 +11,10 @@ def main():
     lp = LoanPool([])
     lp.loadCSV('../../Loans.csv')
 
-    sc = StructuredSecurities(lp.totalPrincipal())
-    # first tranche: 0.8 ntl per, 0.1 rate, sub_level 0
-    sc.addTranche(StandardTranche, 0.8, 0.1, 0)
-    # second tranche: 0.2 ntl per, 0.3 rate, sub_level 1
-    sc.addTranche(StandardTranche, 0.2, 0.3, 1)
+    tr_percents = [0.8, 0.2]
+    tr_rates = [0.1, 0.3]
+    tr_levels = [0, 1]
+    sc = utils.makeSecurities(lp.totalPrincipal(), tr_percents, tr_rates, tr_levels)
 
     # TODO: What is "some clever list comprehension"?
     # Printing results

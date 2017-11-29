@@ -12,19 +12,19 @@ class LoanPool(object):
         self._l_list = loan_list
 
     def totalPrincipal(self):
-        return sum(l.face for l in self._l_list)
+        return sum(l.face for l in self._l_list if not l.defaulted)
 
     def totalBalance(self, period):
-        return sum(l.balance(period) for l in self._l_list)
+        return sum(l.balance(period) for l in self._l_list if not l.defaulted)
 
     def totalDues(self, period):
-        principal_due = sum(l.principalDue(period) for l in self._l_list)
-        interest_due = sum(l.interestDue(period) for l in self._l_list)
-        payment_due = sum(l.monthlyPayment(period) for l in self._l_list)
+        principal_due = sum(l.principalDue(period) for l in self._l_list if not l.defaulted)
+        interest_due = sum(l.interestDue(period) for l in self._l_list if not l.defaulted)
+        payment_due = sum(l.monthlyPayment(period) for l in self._l_list if not l.defaulted)
         return principal_due, interest_due, payment_due
 
     def numOfActive(self, period):
-        return len([l for l in self._l_list if l.balance(period) > 0])
+        return len([l for l in self._l_list if l.balance(period) > 0 and not l.defaulted])
 
     def getWaterfall(self, period):
         ret = []
@@ -66,5 +66,7 @@ class LoanPool(object):
                 recover_amount += l.recoveryValue(period)
         return recover_amount
 
-
+    def reset(self):
+        for l in self._l_list:
+            l.reset()
 

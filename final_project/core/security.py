@@ -56,5 +56,6 @@ class StructuredSecurities(object):
         return ret
 
     def reset(self):
+        self.reserved_account = 0
         for tr in self.tr_lst:
             tr.reset()

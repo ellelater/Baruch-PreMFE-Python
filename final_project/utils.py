@@ -2,6 +2,8 @@ import time
 import logging
 from functools import partial, update_wrapper
 import numpy as np
+from core.security import StructuredSecurities
+from core.tranche import StandardTranche
 
 
 ABSRatingRates = np.array([-np.inf, 0.06, 0.67, 1.3, 2.7, 5.2, 8.9, 13, 19, 27, 46, 72, 106, 143, 183, 231, 311, 2500, 10000])
@@ -12,6 +14,17 @@ ABSRatingLetters = ["Aaa", "Aa1", "Aa2", "Aa3", "A1", "A2", "A3",
 def ABSRating(dirr):
     idx = np.where(ABSRatingRates >= dirr/100.)[0][0] - 1
     return ABSRatingLetters[idx]
+
+
+def makeSecurities(notional, percents, rates, sub_levels):
+    sc = StructuredSecurities(notional)
+    for percent, rate, level in zip(percents, rates, sub_levels):
+        sc.addTranche(StandardTranche, percent, rate, level)
+    return sc
+
+
+def calcYields(dirr, wal):
+    return .01*(7/(1 + .08*np.exp(-.19*wal/12)) + .19 * np.sqrt(wal/12*dirr*100))
 
 
 class Timer(object):
