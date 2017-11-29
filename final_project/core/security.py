@@ -33,11 +33,13 @@ class StructuredSecurities(object):
         if cash_left > 0:  # deal with cash left over here
             if self.mode == "Sequential":
                 for tr in self.tr_lst:
-                    cash_left = tr.makePrincipalPayment(cash_left)
+                    if tr.notionalBalance > 0 and cash_left > 0:
+                        cash_left = tr.makePrincipalPayment(cash_left)
             elif self.mode == 'Pro Rata':
                 tmp_cash_left = 0
                 for tr in self.tr_lst:
-                    tmp_cash_left += tr.makePrincipalPayment(tr.ntl_per * cash_left)
+                    if tr.notionalBalance > 0:
+                        tmp_cash_left += tr.makePrincipalPayment(tr.ntl_per * cash_left)
                 cash_left = tmp_cash_left
         self.reserved_account += cash_left
 
@@ -52,3 +54,7 @@ class StructuredSecurities(object):
             balance = tr.notionalBalance
             ret[i] = [int_due, int_paid, int_shortfall, prp_paid, balance]
         return ret
+
+    def reset(self):
+        for tr in self.tr_lst:
+            tr.reset()

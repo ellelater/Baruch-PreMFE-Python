@@ -1,7 +1,7 @@
-from final_project.core.loan_pool import LoanPool
-from final_project.core.security import StructuredSecurities
-from final_project.core.tranche import StandardTranche
-from final_project.do_waterfall import doWaterfall
+from core.loan_pool import LoanPool
+from core.security import StructuredSecurities
+from core.tranche import StandardTranche
+from waterfall import doWaterfall
 import itertools
 import logging
 
@@ -16,9 +16,13 @@ def main():
     # second tranche: 0.2 ntl per, 0.3 rate, sub_level 1
     sc.addTranche(StandardTranche, 0.2, 0.3, 1)
 
-    # What is "some clever list comprehension"?
+    # TODO: What is "some clever list comprehension"?
+    # Printing results
     tr_metrics, lp_wf, sc_wf, res_amounts = doWaterfall(lp, sc)
-    print tr_metrics
+    print "IRR\tDIRR\tAL\tLetterRating"
+    for tr_metric in tr_metrics:
+        print "{}\t{}\t{}\t{}".format(*tr_metric)
+    # Saving csvs
     with open('loan_pool_waterfall.csv', 'w') as lp_fp:
         for loans in lp_wf:
             lp_fp.write(','.join(map(str, list(itertools.chain(loans)))) + '\n')
