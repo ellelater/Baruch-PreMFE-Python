@@ -29,7 +29,7 @@ def runMonte(loan_pool, n_sim, tol):
         securities = utils.makeSecurities(loan_pool.totalPrincipal(), percents, rates, levels)
         tr_metrics = simulateWaterfall(loan_pool, securities, n_sim)
         yields = utils.calcYields(tr_metrics[:, 0], tr_metrics[:, 1])
-        new_rates = rates + step_sizes * (yields - rates)
+        new_rates = rates + step_sizes * (yields - rates)  # update rates
         diff = np.dot(percents, (rates - new_rates)/rates)
         ii += 1
         rates = new_rates

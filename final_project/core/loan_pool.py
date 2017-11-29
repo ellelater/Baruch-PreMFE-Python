@@ -5,6 +5,10 @@ import numpy as np
 
 
 class LoanPool(object):
+    """
+    Composition of Loans
+    """
+    # used to simulate default actions
     default_periods = np.array([1, 10, 60, 120, 180, 210, 360])
     default_rates = [0.0005, 0.001, 0.002, 0.004, 0.002, 0.001]
 
@@ -15,6 +19,7 @@ class LoanPool(object):
         return sum(l.face for l in self._l_list if not l.defaulted)
 
     def totalBalance(self, period):
+        # need to check default flag since balance is memoized
         return sum(l.balance(period) for l in self._l_list if not l.defaulted)
 
     def totalDues(self, period):
@@ -36,7 +41,7 @@ class LoanPool(object):
     def loadCSV(self, file_path):
         with open(file_path, 'r') as fp:
             reader = csv.reader(fp, delimiter=',')
-            header = next(reader, None)
+            header = next(reader, None)  # skip first row
             for row in reader:
                 [loan_id, loan_type, face, rate, term, asset_type, asset_val] = row
                 loan_type = ''.join(loan_type.strip().split(' '))
@@ -54,8 +59,9 @@ class LoanPool(object):
         return nominator * 1.0 / denominator
 
     def checkDefaults(self, period):
-        rate_idx = np.where(period <= LoanPool.default_periods)[0][0]
-        default_prob = LoanPool.default_rates[rate_idx]
+        rate_idx = np.where(period <= LoanPool.default_periods)[0][0]  # get the corresponding interval
+        default_prob = LoanPool.default_rates[rate_idx]  # default rate
+        # default flag ~ B(default rate)
         defaults = np.asarray(np.random.uniform(size=len(self._l_list)) > default_prob, dtype=int)
         recover_amount = 0
         for l, default in zip(self._l_list, defaults):
@@ -67,6 +73,10 @@ class LoanPool(object):
         return recover_amount
 
     def reset(self):
+        """
+        Set all loan object to original state
+        :return:
+        """
         for l in self._l_list:
             l.reset()
 

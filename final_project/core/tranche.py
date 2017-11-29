@@ -6,6 +6,9 @@ import numpy as np
 
 
 class Tranche(object):
+    """
+    Tranche base class
+    """
     def __init__(self, notional, notional_percent, rate, sub_level):
         self.notional = notional
         self.ntl_per = notional_percent
@@ -22,7 +25,7 @@ class Tranche(object):
         return sum((i+1)*payments[i] for i in xrange(len(payments))) / self.notional
 
 
-# TODO: Pay 0 equals to hasnt paid?
+# TODO: Pay 0 equivalent to not paid?
 class StandardTranche(Tranche):
     def __init__(self, notional, notional_percent, rate, sub_level):
         super(StandardTranche, self).__init__(notional, notional_percent, rate, sub_level)
@@ -54,6 +57,10 @@ class StandardTranche(Tranche):
         return self._cur_int_shortfall
 
     def increaseTimePeriod(self):
+        """
+        Re-calculate the dues for next period
+        :return:
+        """
         self._cur_time += 1
         self._cur_int_due = self.rate * self._cur_ntl_balance + self._cur_int_shortfall
         self._cur_int_shortfall = 0
@@ -81,6 +88,10 @@ class StandardTranche(Tranche):
         return amount - self._cur_int_paid
 
     def reset(self):
+        """
+        Reset object to original state
+        :return:
+        """
         self._cur_time = 0
         self._cur_ntl_balance = self.notional
         self._cur_int_due = 0

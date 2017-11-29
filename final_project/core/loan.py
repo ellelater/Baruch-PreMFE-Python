@@ -4,6 +4,9 @@ from final_project.utils import Memoized
 
 
 class Loan(object):
+    """
+    Loan Base class
+    """
     def __init__(self, term, rate, face, asset):
         if not isinstance(asset, Asset):
             logging.error("Input must be of asset class")
@@ -69,8 +72,8 @@ class Loan(object):
         elif self.defaulted:
             logging.info("Loan defaulted")
             return 0
-        return self._face * (1 + self._rate) ** period - self.monthlyPayment(period) * \
-                                                         ((1 + self._rate) ** period - 1) / self._rate
+        return self.face * (1 + self.rate) ** period - self.monthlyPayment(period) * \
+                                                       ((1 + self.rate) ** period - 1) / self.rate
 
     def checkDefault(self, flag):
         if flag == 0:

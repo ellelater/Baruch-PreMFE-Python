@@ -31,11 +31,11 @@ class StructuredSecurities(object):
             if tr.notionalBalance > 0:
                 cash_left = tr.makeInterestPayment(cash_left)
         if cash_left > 0:  # deal with cash left over here
-            if self.mode == "Sequential":
+            if self.mode == "Sequential":  # paid according to tranche level
                 for tr in self.tr_lst:
                     if tr.notionalBalance > 0 and cash_left > 0:
                         cash_left = tr.makePrincipalPayment(cash_left)
-            elif self.mode == 'Pro Rata':
+            elif self.mode == 'Pro Rata':  # each tranche gets paid w.r.t. its portion
                 tmp_cash_left = 0
                 for tr in self.tr_lst:
                     if tr.notionalBalance > 0:
@@ -44,6 +44,11 @@ class StructuredSecurities(object):
         self.reserved_account += cash_left
 
     def getWaterfall(self):
+        """
+        Waterfall algorithm
+        :return: [interest due, interest paid, interest shortfall,
+                  principal paid, balance] for each tranche for each period
+        """
         ret = [[] for tr in self.tr_lst]
         for i, tr in enumerate(self.tr_lst):
             # Calculate these quantities for each tranche

@@ -1,12 +1,8 @@
-import itertools
 import logging
 
 import utils
 from core.loan_pool import LoanPool
-from core.security import StructuredSecurities
-from core.tranche import StandardTranche
 from simulation.monte_carlos import simulateWaterfall, runMonte
-from waterfall import doWaterfall
 
 
 def main():
@@ -23,6 +19,7 @@ def main():
     """ Testing runMonte """
     rates = runMonte(lp, 1, 1e-3)
     print "Converged results:", rates
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.ERROR)
