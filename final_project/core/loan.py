@@ -1,6 +1,6 @@
 from asset import Asset, Car
 import logging
-from final_project.utils import Memoized
+from utils import Memoized
 
 
 class Loan(object):

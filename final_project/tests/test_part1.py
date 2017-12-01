@@ -9,7 +9,7 @@ import logging
 
 def main():
     lp = LoanPool([])
-    lp.loadCSV('../../Loans.csv')
+    lp.loadCSV('Loans.csv')
 
     tr_percents = [0.8, 0.2]
     tr_rates = [0.1, 0.3]

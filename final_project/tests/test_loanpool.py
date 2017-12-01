@@ -1,9 +1,9 @@
-from final_project.core.loan_pool import LoanPool
+from core.loan_pool import LoanPool
 
 
 def main():
     lp = LoanPool([])
-    lp.loadCSV('../../Loans.csv')
+    lp.loadCSV('Loans.csv')
     print lp.totalPrincipal()
     for t in range(20, 50):
         print lp.totalBalance(t)

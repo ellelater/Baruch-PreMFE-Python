@@ -7,7 +7,7 @@ from simulation.monte_carlos import simulateWaterfall, runMonte
 
 def main():
     lp = LoanPool([])
-    lp.loadCSV('../../Loans.csv')
+    lp.loadCSV('Loans.csv')
 
     """ Testing simulateMonte """
     # tr_percents = [0.8, 0.2]
